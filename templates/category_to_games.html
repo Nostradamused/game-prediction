@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Dropdown Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        select {
+            padding: 8px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<h2>Select a category:</h2>
+    
+<!-- Dropdown will be populated here -->
+<select id="categoryDropdown"></select>
+
+<!-- Button to trigger API request -->
+<button onclick="fetchGames()">Get Games</button>
+
+<!-- Display the result -->
+<div id="result"></div>
+
+<script>
+    // Function to fetch data from API and populate dropdown
+    function populateDropdown() {
+        // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint
+        fetch('http://127.0.0.1:5000/categories')
+            .then(response => response.json())
+            .then(data => {
+                const dropdown = document.getElementById('categoryDropdown');
+
+                // Clear existing options
+                dropdown.innerHTML = '';
+
+                // Populate dropdown with fetched data
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;  // Assuming each item has an 'id' property
+                    option.text = item; // Assuming each item has a 'name' property
+                    dropdown.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+
+    // Call the function to populate the dropdown on page load
+    populateDropdown();
+        // Function to fetch games based on the selected category
+    function fetchGames() {
+    const selectedCategory = document.getElementById('categoryDropdown').value;
+    const resultContainer = document.getElementById('result');
+
+    // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint
+    fetch(`http://127.0.0.1:5000/games_proposition/${selectedCategory}`)
+        .then(response => response.json())
+        .then(data => {
+            // Display the result
+            resultContainer.innerHTML = `<p>Games for ${selectedCategory}:</p><ul>${data.map(game => `<li>${game}</li>`).join('')}</ul>`;
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            resultContainer.innerHTML = `<p>Error fetching data.</p>`;
+        });
+    }
+
+</script>
+
+</body>
+</html>
